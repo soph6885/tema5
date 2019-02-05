@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+
+<body>
+
+    <div id="content">
+
+        <div>
+            <a href="https://kea.dk">KEA</a>
+        </div>
+
+        <div>
+            <a href="https://github.com/soph6885">GitHub</a>
+        </div>
+
+        <div>
+            <img src="http://helf-kea.dk/test/frog.png" alt="billede af frø">
+        </div>
+
+    </div>
+
+    <script>
+        console.log(content);
+
+        let content = document.querySelector("#content");
+        console.log(content);
+
+        console.log(document.querySelector("#content div"))
+        console.log(document.querySelector("#content div a"))
+        console.log(document.querySelector("#content div + div a")) // denne sætning henviser til nr. 2 div med a elementet til GitHub
+        console.log(document.querySelector("#content div + div + div"))
+
+        let img = document.querySelector("img");
+        console.log(img);
+
+        // img kunne også skrives som, så er vi sikre på at vælge den korekte, hvis nu vi skulle få flere img elementer:
+        console.log(document.querySelector("#content div + div + div img"));
+
+        //Denne sætning kan endnu videre skrives som:
+        console.log(document.querySelector("#content div:nth-child(3) img"));
+        // Her vælger vi altså den 3. div der indeholder img tagget/elementet.
+
+    </script>
+
+</body>
+
+</html>
