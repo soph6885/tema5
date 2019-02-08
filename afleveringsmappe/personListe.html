@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personliste</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <style>
+
+        img{
+            max-width: 200px;
+            border-radius: 3.5px;
+        }
+
+        body{
+            font-family:monospace;
+        }
+
+        h2{
+            font-family: 'Lato', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        a{
+            text-decoration: none;
+            color: black;
+        }
+
+            #liste {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            grid-gap: 1vw;
+        }
+
+        .person {
+            border: 1.5px solid black;
+            margin: 5px;
+            padding: 10px;
+        }
+
+        @media only screen and (min-width: 600px) {
+
+            /* For tablets */
+            #liste {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media only screen and (min-width: 768px) {
+
+            /* For tablets */
+            #liste {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="liste">
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", hentJson);
+
+
+        let personer;
+        // Hent json i asynkron function
+        async function hentJson() {
+            // henter data filen
+            const myJson = await fetch("https://mandalskeawebspace.dk/claude_php/clean_up_spreadsheet.php?id=1OLlD_GRoz71piHvnW306omRAyHS7vtLOILQt-K0YF_c");
+            // den hentede data skal tolkes som json
+            personer = await myJson.json();
+            // kald funktion der viser data i DOM
+            start();
+        }
+
+        function start() {
+
+        let dest = document.querySelector("#liste");
+
+        function visPersoner() {
+
+            personer.forEach(person => {
+                dest.innerHTML += `
+                    <div class="person">
+                         <h2>${person.navn}</h2>
+                         <img src="${person.billede}" alt="${person.navn}"><br>
+                         <a href="https://github.com/${person.github}"> Link til GitHub</a>
+                    </div>`
+                })
+
+            }
+
+            visPersoner();
+        }
+
+    </script>
+
+</body>
+
+</html>
