@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bistro Babushka</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Lato', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 3.5px;
+        }
+
+        #liste {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            grid-gap: 1vw;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        p {
+            font-size: 12px;
+        }
+
+        .ret {
+            border: 1.5px solid black;
+            margin: 5px;
+            padding: 8px;
+        }
+
+        @media only screen and (max-width: 600px) {
+
+            /* For tablets */
+            #liste {
+                max-width: 300px;
+            }
+
+            #indhold img {
+                max-width: 250px;
+            }
+        }
+
+        @media only screen and (min-width: 600px) {
+
+            /* For tablets */
+            #liste {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            footer {
+                display: flex;
+            }
+
+        }
+
+        @media only screen and (min-width: 940px) {
+
+            /* For computers */
+            #liste {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            h1 {
+                font-size: 50px;
+                letter-spacing: 10px;
+            }
+        }
+
+        .menu {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .filter {
+            font-family: 'Lato', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            padding: 8px;
+        }
+
+        button {
+            background-color: black;
+            color: white;
+            border: solid;
+            border-radius: 8px;
+        }
+
+        .valgt {
+            background-color: red;
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            background-color: orange;
+            padding-top: 60px;
+            padding-bottom: 60px;
+            margin-top: 0;
+            color: red;
+        }
+
+        h2 {
+            font-size: 20px;
+        }
+
+        img {
+            max-width: 270px;
+        }
+
+        footer {
+            padding: 2rem;
+            font-size: 10px;
+            background-color: darkgrey;
+            margin-top: 30px;
+        }
+
+        footer p {
+            margin: auto;
+            margin-left: 16px;
+            margin-right: 16px;
+            font-size: 9px;
+        }
+
+        #popup {
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            background-color: white;
+            display: none;
+            overflow: scroll;
+        }
+
+        #indhold {
+            min-height: auto;
+            background-color: white;
+            width: 70vw;
+            margin: 1rem auto;
+            margin-top: 50px;
+        }
+
+        #luk {
+            position: fixed;
+            right: 0rem;
+            padding-right: 0rem;
+            cursor: pointer;
+        }
+
+        #luk button {
+            font-size: 1rem;
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="popup">
+        <div id="luk">
+            <button> X </button>
+        </div>
+        <div id="indhold"></div>
+    </div>
+
+    <header>
+        <h1>Bistro Babushka</h1>
+        <div class="menu">
+            <button class="filter valgt" data-hold="alle">Alle</button>
+            <button class="filter" data-hold="forretter">Forretter</button>
+            <button class="filter" data-hold="hovedretter">Hovedretter</button>
+            <button class="filter" data-hold="desserter">Desserter</button>
+            <button class="filter" data-hold="drikkevarer">Drikkevarer</button>
+            <button class="filter" data-hold="sideorders">Sideorders</button>
+        </div>
+    </header>
+
+    <div id="liste"></div>
+
+
+    <script>
+        let retter = [];
+        let filter = "alle";
+
+        document.addEventListener("DOMContentLoaded", start);
+
+        function start() {
+            let dest = document.querySelector("#liste");
+            async function hentJson() {
+                let jsonData = await fetch("https://mandalskeawebspace.dk/claude_php/clean_up_spreadsheet.php?id=1jxxxFoWBuMJ1qhQ9BQIAyKHmP38XtAF9_sQr0xo5JLo");
+                retter = await jsonData.json();
+                visRetter();
+            }
+
+            function visRetter() {
+                dest.innerHTML = "";
+                retter.forEach(ret => {
+                    if (filter == "alle" || filter == ret.kategori) {
+                        let template =
+                            `<article class="ret">
+                                <img src="imgs/small/${ret.billede}-sm.jpg" alt="${ret.navn}">
+                                <h2>${ret.navn}</h2>
+                                <p>${ret.kort}</p>
+                                <p>Pris: ${ret.pris} kr.</p>
+                            </article>`;
+                        dest.insertAdjacentHTML("beforeend", template);
+                        dest.lastElementChild.addEventListener("click", () => {
+                            visSingle(ret);
+                        });
+                    }
+                });
+            } // function visRetter slut
+
+            hentJson();
+
+            document.querySelectorAll(".filter").forEach(but => {
+
+                but.addEventListener("click", filtrering);
+                console.log(filter);
+            })
+
+            function filtrering() {
+                document.querySelectorAll(".filter").forEach(but => {
+
+                    but.classList.remove("valgt"); // fordi man bruger classList behøver man ikke at skrive at det er en klasse med "."
+                });
+                this.classList.add("valgt");
+                filter = this.getAttribute("data-hold");
+                visRetter();
+            }
+
+        } // function start slut
+
+
+        function visSingle(ret) {
+
+            document.querySelector("#indhold").innerHTML =
+                `<article class="ret">
+                    <img src="imgs/small/${ret.billede}-sm.jpg" alt="${ret.navn}">
+                    <h2>${ret.navn}</h2>
+                    <p>Oprindelse: ${ret.oprindelse}</p>
+                    <p>${ret.lang}</p>
+                    <p>Pris: ${ret.pris} kr.</p>
+                </article>`;
+            document.querySelector("#popup").style.display = "block";
+            document.querySelector("#popup #luk").addEventListener("click", close);
+        }
+
+        function close() {
+            document.querySelector("#popup").style.display = "none";
+        }
+    </script>
+
+    <footer>
+        <p>Adresse:<br>Grønnegade 97<br>1234 København K</p><br>
+        <p>Åbningstider:<br>Mandag-Fredag 10.30-22.00<br>Lørdag 12.00-23.00</p>
+    </footer>
+</body>
+
+</html>

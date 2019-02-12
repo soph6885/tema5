@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+
+<body>
+
+    <div id="liste">
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", hentJson);
+
+
+        let dyrene;
+        // Hent json i asynkron function
+        async function hentJson() {
+            // henter data filen
+            const myJson = await fetch("https://mandalskeawebspace.dk/claude_php/clean_up_spreadsheet.php?id=1eBNqPb_SgxmA2kVMKTKGLCg5qyrGd0HoXPzaYXe7qJA");
+            // den hentede data skal tolkes som json
+            dyrene = await myJson.json();
+            // kald funktion der viser data i DOM
+            start();
+        }
+
+
+        function start() {
+
+            let dest = document.querySelector("#liste");
+
+            dyrene.forEach(dyr => {
+                dest.innerHTML += `${dyr.navn} ${dyr.type} ${dyr.levested} <img src= ${dyr.billede}><br>`;
+            })
+
+        }
+
+    </script>
+
+</body>
+
+</html>
